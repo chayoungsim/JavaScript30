@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>JS + CSS Clock</title>
+  <style>
+  html{
+    background:#018ded url(sky.jpg) 50% 100%;
+    background-size:cover;
+    font-family: 'helvetica nenu';
+    text-align:center;
+    font-size:10px;
+  }
+
+  body{
+    margin:0;
+    font-size:2rem;
+    display:flex;
+    flex:1;
+    min-height:100vh;
+    align-items:center;
+  }
+  .clock{
+    width:30rem;
+    height:30rem;
+    border:20px solid #fff;
+    border-radius:50%;
+    margin:50px auto;
+    position: relative;
+    padding:2rem;
+    box-shadow:0 0 0 4px rgba(0,0,0,0.1),
+      inset 0 0 0 3px #efefef,
+      inset 0 0 10px #000, 0 0 10px rgba(0,0,0,0.2)
+  }
+  .clock-face{
+    position: relative;
+    width:100%;
+    height:100%;
+    transform:translateY(-3px)
+  }
+  .hand{
+    width:50%;
+    height:6px;
+    background:#000;
+    position:absolute;
+    top:50%;
+    transform-origin: 100%;
+    transform:rotate(90deg);
+    transition: all 0.05s;
+    transition-timing-function: cubic-bezier(1.7,2.7,0.58,1);
+  }
+  .clock-display{
+    position:absolute;
+    bottom:10rem;
+    width:100%;
+    text-align:center;
+    font-size:4rem;
+  }
+  .clock-display span{
+    
+  }
+  </style>
+</head>
+<body>
+  <div class="clock">
+    <div class="clock-face">
+      <div class="hand hour-hand"></div>
+      <div class="hand min-hand"></div>
+      <div class="hand second-hand"></div>
+    </div>
+  </div>
+  <div class="clock-display"></div>
+  <script>
+    const clockDisplay = document.querySelector('.clock-display');
+    const hourHand = document.querySelector('.hour-hand');
+    const minHand = document.querySelector('.min-hand');
+    const secondHand = document.querySelector('.second-hand');
+
+    function setDate() {
+      const date = new Date()
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const seconds = date.getSeconds();     
+
+      // 1. 초침이 0초에서 뒤로 점프하는 현상 방지
+      if (seconds === 0) {
+        secondHand.style.transition = 'none';
+      } else {
+        secondHand.style.transition = 'all 0.05s';
+      }
+
+      // 2. 시침/분침 부드럽게 움직이도록 계산식 수정
+      const secondsDegrees = ((seconds / 60) * 360) + 90;
+      const minsDegrees = ((minutes / 60) * 360) + ((seconds/60)*6) + 90;
+      const hourDegrees = ((hours / 12) * 360) + ((minutes/60)*30) + 90;
+
+      secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+      minHand.style.transform = `rotate(${minsDegrees}deg)`;
+      hourHand.style.transform = `rotate(${hourDegrees}deg)`;
+
+      // 3. 디지털 시계 표시 형식 개선 (0 붙이기)
+      const formattedHours = String(hours).padStart(2, '0');
+      const formattedMinutes = String(minutes).padStart(2, '0');
+      const formattedSeconds = String(seconds).padStart(2, '0');
+      clockDisplay.innerHTML = `${formattedHours} : ${formattedMinutes} : ${formattedSeconds}`;
+    }
+
+    setInterval(setDate,1000)
+  </script>
+</body>
+</html>
